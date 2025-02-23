@@ -18,24 +18,37 @@ def calculate_sq_norm(x):
     return x[0]**2 + x[1]**2
 
 
+# def gradient_descent0(x0, step_size, end_condition):
+#     results = np.array([])
+#     for i in range(10000):
+#         gradient_x0 = compute_gradient(x0)
+#         x1 = x0 - np.multiply(gradient_x0, step_size)
+#         if calculate_objective(x1) - calculate_objective(x0) + epsilon*calculate_sq_norm(gradient_x0) <= 0:
+#             if calculate_norm(compute_gradient(x1)) <= end_condition:
+#                 break
+#             else:
+#                 x0 = x1
+#                 results = np.append(results, calculate_objective(x0))
+#         else:
+#             step_size = step_size / 2
+#     return x1, results
+
+
 def gradient_descent(x0, step_size, end_condition):
     results = np.array([])
     for i in range(10000):
         gradient_x0 = compute_gradient(x0)
         x1 = x0 - np.multiply(gradient_x0, step_size)
-        if calculate_objective(x1) - calculate_objective(x0) + epsilon*calculate_sq_norm(gradient_x0) <= 0:
-            if calculate_norm(compute_gradient(x1)) <= end_condition:
-                break
-            else:
-                x0 = x1
-                results = np.append(results, calculate_objective(x0))
+        if calculate_norm(compute_gradient(x1)) <= end_condition:
+            break
         else:
-            step_size = step_size / 2
+            x0 = x1
+            results = np.append(results, calculate_objective(x0))
     return x1, results
 
 
 start = np.array([-2, 2])
-step = 0.1
+step = 0.001
 end = 0.0001
 epsilon = 0
 
