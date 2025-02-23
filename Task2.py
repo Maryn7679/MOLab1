@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import time
 
 
 A = np.array([[9.25336081, 4.16813642, 52.33516583, 49.88931588, 24.87415869],
@@ -17,7 +18,7 @@ def calculate_objective(x):
 
 
 def compute_gradient(x):
-    return 1/A.shape[0] * A.transpose() @ A @ x
+    return 1/(2 * A.shape[0]) * (A.transpose() @ (A @ x - b))/np.linalg.norm(A @ x - b, 2)
 
 
 def gradient_descent(x0, step_size, end_condition):
@@ -25,26 +26,32 @@ def gradient_descent(x0, step_size, end_condition):
     for i in range(50):
         gradient_x0 = compute_gradient(x0)
         x1 = x0 - np.multiply(gradient_x0, step_size)
-        print(x1)
-        # if calculate_norm(compute_gradient(x1)) <= end_condition:
-        #     break
-        # else:
-        x0 = x1
-        results = np.append(results, calculate_objective(x0))
+        if np.linalg.norm(compute_gradient(x1)) <= end_condition:
+            break
+        else:
+            x0 = x1
+            results = np.append(results, calculate_objective(x0))
     return x1, results
 
 
-L1 = 1/A.shape[0] * np.linalg.norm(A)
-
-start = np.array([1, 5, 9, 7, 3]).transpose()
-step = 1/L1
+start1 = np.array([1, 5, 9, 7, 3]).transpose()
+start2 = np.array([1, 1, 1, 2, 1]).transpose()
 end = 0.0001
 
-descent = gradient_descent(start, step, end)
-print(descent[0])
-calculations = descent[1]
+L1 = 1/A.shape[0] * np.linalg.norm(A)
+L2_max = 1/A.shape[0] * (np.linalg.norm(A.transpose() @ A) * np.linalg.norm(start2) + np.linalg.norm(A.transpose()@b))
+print(L2_max)
 
-ax = plt.gca()
-plt.plot(calculations)
-# ax.set_ylim(0, 7)
+step1 = 1/L1
+step2 = 1/400
+
+descent1 = gradient_descent(start1, step1, end)
+calculations1 = descent1[1]
+
+descent2 = gradient_descent(start2, step2, end)
+calculations2 = descent2[1]
+
+plt.plot(calculations1)
+plt.show()
+plt.plot(calculations2)
 plt.show()
