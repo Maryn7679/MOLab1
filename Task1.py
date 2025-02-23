@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import time
 
 
 def calculate_objective(x):
@@ -14,10 +15,10 @@ def calculate_norm(x):
     return np.sqrt(x[0]**2 + x[1]**2)
 
 
-def calculate_sq_norm(x):
-    return x[0]**2 + x[1]**2
-
-
+# def calculate_sq_norm(x):
+#     return x[0]**2 + x[1]**2
+#
+#
 # def gradient_descent0(x0, step_size, end_condition):
 #     results = np.array([])
 #     for i in range(10000):
@@ -50,9 +51,12 @@ def gradient_descent(x0, step_size, end_condition):
 start = np.array([-2, 2])
 step = 0.001
 end = 0.0001
-epsilon = 0
+# epsilon = 0
 
+start_time = time.time()
 descent = gradient_descent(start, step, end)
+exec_time = time.time() - start_time
+print(f"Execution time is {exec_time} seconds")
 print(descent[0])
 calculations = descent[1]
 

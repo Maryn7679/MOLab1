@@ -44,7 +44,7 @@ def gradient_descent2(x0, step_size, end_condition):
     return x1, results
 
 
-start = 5
+start = 2
 
 ax = plt.gca()
 x_axis = np.linspace(0, 2, 100)
@@ -63,13 +63,6 @@ plt.plot(x_axis, dy2)
 plt.axhline(0.62)
 plt.show()
 
-L1 = 1/0.62
-descent1 = gradient_descent1(start, L1, 0.000001)
-calculations1 = descent1[1]
-print("Intersection point for 1: " + f'{descent1[0]:.5f}')
-plt.plot(calculations1)
-plt.show()
-
 y3 = (x_axis - np.log(2 + x_axis))**2 / 2
 plt.plot(x_axis, y3)
 dy3 = x_axis + np.log(2+x_axis)/(2+x_axis) - np.log(2+x_axis) - x_axis/(2+x_axis)
@@ -77,9 +70,16 @@ plt.plot(x_axis, dy3)
 plt.axhline(0.49)
 plt.show()
 
+L1 = 1/0.62
+descent1 = gradient_descent1(start, L1, 0.000001)
+calculations1 = descent1[1]
+print("Intersection point for 1: " + f'{descent1[0]:.5f}')
+plt.plot(calculations1)
+
 L2 = 1/0.49
 descent2 = gradient_descent2(start, L2, 0.000001)
 calculations2 = descent2[1]
 print("Intersection point for 2: " + f'{descent2[0]:.5f}')
 plt.plot(calculations2)
+
 plt.show()
