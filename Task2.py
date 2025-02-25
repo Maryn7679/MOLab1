@@ -14,11 +14,11 @@ b = np.array([19.20927724, 45.17305068, 0.43302717, 37.00013531, 72.33081754, 46
 
 
 def calculate_objective(x):
-    return 1/(2*A.shape[0]) * np.linalg.norm(A @ x - b, 2)
+    return 1/(2*A.shape[0]) * np.linalg.norm(A @ x - b, 2)**2
 
 
 def compute_gradient(x):
-    return 1/(2 * A.shape[0]) * (A.transpose() @ (A @ x - b))/np.linalg.norm(A @ x - b, 2)
+    return 2 * A.transpose() @ (A @ x - b)
 
 
 def gradient_descent(x0, step_size, end_condition):
@@ -34,23 +34,36 @@ def gradient_descent(x0, step_size, end_condition):
     return x1, results
 
 
-start1 = np.array([1, 5, 9, 7, 3]).transpose()
-start2 = np.array([1, 1, 1, 2, 1]).transpose()
+start = np.array([1, 5, 9, 7, 3]).transpose()
+x20 = np.array([8.9, 8.9, 8.9, 8.9, 8.9]).transpose()
 end = 0.0001
 
-L1 = 1/A.shape[0] * np.linalg.norm(A)
-L2_max = 1/A.shape[0] * (np.linalg.norm(A.transpose() @ A) * np.linalg.norm(start2) + np.linalg.norm(A.transpose()@b))
-print(L2_max)
+L1 = (1/A.shape[0]) * np.linalg.norm(A, 2)**2
+L2 = 1/A.shape[0] * (np.linalg.norm(A.transpose() @ A) * np.linalg.norm(x20) + np.linalg.norm(A.transpose()@b))
 
 step1 = 1/L1
-step2 = 1/400
+step2 = 1/L2
 
-descent1 = gradient_descent(start1, step1, end)
+start_time = time.time()
+descent0 = gradient_descent(start, 0.1, end)
+exec_time = time.time() - start_time
+print(f"Execution time step=0.1 is {exec_time} seconds")
+calculations0 = descent0[1]
+
+start_time = time.time()
+descent1 = gradient_descent(start, step1, end)
+exec_time = time.time() - start_time
+print(f"Execution time step=1/L1 is {exec_time} seconds")
 calculations1 = descent1[1]
 
-descent2 = gradient_descent(start2, step2, end)
+start_time = time.time()
+descent2 = gradient_descent(start, step2, end)
+exec_time = time.time() - start_time
+print(f"Execution time step=1/L2 is {exec_time} seconds")
 calculations2 = descent2[1]
 
+plt.plot(calculations0)
+plt.show()
 plt.plot(calculations1)
 plt.show()
 plt.plot(calculations2)

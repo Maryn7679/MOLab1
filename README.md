@@ -15,17 +15,17 @@ Step sizes 0.1 and 0.01 don't converge
 
 Step size 0.1:
 
-Execution time is 0.0011522769927978516 seconds
+Execution time is 0.0009922981262207031 seconds
 ![Figure 7](Figure_7.png)
 
-Step size L1:
+Step size 1/L1:
 
-Execution time is 0.0010976791381835938 seconds
+Execution time is 0.0010688304901123047 seconds
 ![Figure 6](Figure_6.png)
 
-Step size L2 for ||x|| < 20:
+Step size 1/L2 for ||x|| < 20:
 
-Execution time is 0.0009999275207519531 seconds
+Execution time is 0.000997304916381836 seconds
 ![Figure 8](Figure_8.png)
 L2 <= 49452
 I chose L2 = 400
