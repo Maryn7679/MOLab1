@@ -18,7 +18,7 @@ def calculate_objective(x):
 
 
 def compute_gradient(x):
-    return 2 * A.transpose() @ (A @ x - b)
+    return 1/A.shape[0] * A.transpose() @ (A @ x - b)
 
 
 def gradient_descent(x0, step_size, end_condition):
