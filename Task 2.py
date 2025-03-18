@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import random
 
+random.seed(122)
 file = pd.read_csv('weight-height.csv', sep=',')
 file["Buffer"] = 1
 
@@ -11,10 +13,14 @@ X = file[["Buffer", "Height"]]
 
 def calculate_objective(o):
     return 1/(2*len(y)) * np.linalg.norm(y - X @ o)**2
+    # i = random.randrange(len(y))
+    # return 1/2 * (y[i] - o[0] - o[1]*X.loc[i]["Height"])**2
 
 
 def compute_gradient(o):
-    return -1/len(y) * X.transpose() @ (y - X @ o)
+    i = random.randrange(len(y))
+    return np.array([-(y[i] - o[0] - o[1]*X.loc[i]["Height"]),
+                     -X.loc[i]["Height"] * (y[i] - o[0] - o[1]*X.loc[i]["Height"])])
 
 
 def gradient_descent(x0, step_size, end_condition):
