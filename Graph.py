@@ -92,13 +92,19 @@ end = 0.0001
 
 L1 = (1/len(y)) * np.linalg.norm(X, 2)**2
 step1 = 1/L1
+
+plt.scatter(X["Height"], y)
+
 descent0 = gradient_descent0(start, step1, end)
 descent1 = gradient_descent1(start, step1, end)
 descent2 = gradient_descent2(start, step1, end)
-calculations0 = descent0[1]
-calculations1 = descent1[1]
-calculations2 = descent2[1]
-plt.plot(calculations0)
-plt.plot(calculations1)
-plt.plot(calculations2)
+
+print(descent0[0])
+print(descent1[0])
+print(descent2[0])
+
+plt.axline((0, descent0[0].item(0)), (1, descent0[0].item(0) + descent0[0].item(1)))
+plt.axline((0, descent1[0].item(0)), (1, descent1[0].item(0) + descent1[0].item(1)))
+plt.axline((0, descent2[0].item(0)), (1, descent2[0].item(0) + descent2[0].item(1)))
+
 plt.show()
