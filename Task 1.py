@@ -38,10 +38,13 @@ def compute_second_gradient(x):
 
 def newton_minimizer(x0, end_condition):
     results = np.array([])
+    directions = np.array([])
+    second_derivatives = np.array([])
     for i in range(10000):
         if i % 1000 == 0:
             print(f"Iteration {i}: x = {x0}")
-        direction = np.linalg.solve(compute_second_gradient(x0), -compute_gradient(x0))
+        second_derivative = compute_second_gradient(x0)
+        direction = np.linalg.solve(second_derivative, -compute_gradient(x0))
         x1 = x0 + direction
         function_value = calculate_objective(x0)
         if abs(function_value - calculate_objective(x1)) <= end_condition:
@@ -49,19 +52,25 @@ def newton_minimizer(x0, end_condition):
         else:
             x0 = x1
             results = np.append(results, function_value)
+            directions = np.append(directions, direction)
+            second_derivatives = np.append(second_derivatives, second_derivative)
     results = np.append(results, calculate_objective(x0))
-    return x1, results, i
+    return x1, i, results, directions, second_derivatives
 
 
-start = np.array([-2, 10])
+start1 = np.array([2, 4])
+start2 = np.array([-2, 10])
 epsilon = 0.000001
 
-start_time = time.time()
-descent = newton_minimizer(start, epsilon)
-exec_time = time.time() - start_time
-print(f"Execution time is {exec_time} seconds")
-print(f"Found x* = {descent[0]} in {descent[2]} iterations")
-calculations = descent[1]
+descent1 = newton_minimizer(start1, epsilon)
+print(f"Found x* = {descent1[0]} starting from {start1} in {descent1[1]} iterations")
+calculations1 = descent1[2]
 
-plt.plot(calculations)
+
+descent2 = newton_minimizer(start2, epsilon)
+print(f"Found x* = {descent2[0]} starting from {start2} in {descent2[1]} iterations")
+calculations2 = descent2[2]
+
+plt.plot(calculations1)
+plt.plot(calculations2)
 plt.show()
