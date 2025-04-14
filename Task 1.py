@@ -1,56 +1,86 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import random
 import time
 
 
-def calculate_objective(x):
-    return 10 * (x[1] - x[0]**2)**2 + (1 - x[0])**2
+cases = 10
+n_items = 5
+size_of_bag = 15
+items = [[12, 4], [1, 2], [1, 1], [2, 2], [4, 10]]
 
 
-def compute_gradient(x):
-    return np.array([40*x[0]**3 - 40*x[0]*x[1] + 2*x[0] - 2, 20 * (x[1] - (x[0]**2))])
+def gen_chromosomes(n):
+    result = []
+    for i in range(n):
+        result.append(np.random.default_rng().integers(2, size=n_items))
+    return result
 
 
-def compute_second_gradient(x):
-    return np.array([[120*x[0]**2 - 40*x[1] + 2, -40*x[0]],
-                    [-40*x[0], 20]])
+def fitness(chromosome):
+    fitness_sum = 0
+    weight_sum = 0
+    for gene, item in zip(chromosome, items):
+        weight_sum += item[0]
+        if weight_sum > size_of_bag:
+            return -1
+        fitness_sum += gene * item[1]
+    return fitness_sum
 
 
-def newton_minimizer(x0, end_condition):
-    results = np.array([])
-    directions = np.array([])
-    second_derivatives = np.array([])
-    for i in range(10000):
-        if i % 1000 == 0:
-            print(f"Iteration {i}: x = {x0}")
-        second_derivative = compute_second_gradient(x0)
-        direction = np.linalg.solve(second_derivative, -compute_gradient(x0))
-        x1 = x0 + direction
-        function_value = calculate_objective(x0)
-        if abs(function_value - calculate_objective(x1)) <= end_condition:
-            break
-        else:
-            x0 = x1
-            results = np.append(results, function_value)
-            directions = np.append(directions, direction)
-            second_derivatives = np.append(second_derivatives, second_derivative)
-    results = np.append(results, calculate_objective(x0))
-    return x1, i, results, directions, second_derivatives
+def selection(chromosomes):
+    return chromosomes[:(n_items//2)]
 
 
-start1 = np.array([2, 4])
-start2 = np.array([-2, 10])
-epsilon = 0.000001
-
-descent1 = newton_minimizer(start1, epsilon)
-print(f"Found x* = {descent1[0]} starting from {start1} in {descent1[1]} iterations")
-calculations1 = descent1[2]
+def crossover(chr1, chr2):
+    point = random.randint(1, n_items - 1)
+    return chr1[:point] + chr2[point:], chr2[:point] + chr1[point:]
 
 
-descent2 = newton_minimizer(start2, epsilon)
-print(f"Found x* = {descent2[0]} starting from {start2} in {descent2[1]} iterations")
-calculations2 = descent2[2]
+def mutation(chromosome):
+    i = random.randint(0, n_items)
+    chromosome[i] = not chromosome[i]
+    return chromosome
 
-plt.plot(calculations1)
-plt.plot(calculations2)
-plt.show()
+
+def chromosome_to_items(chromosome):
+    result = []
+    for gene, item in zip(chromosome, items):
+        if gene:
+            result.append(item)
+    return result
+
+
+def genetic_algorithm():
+    fitness1 = -3
+    fitness2 = -2
+    fitness3 = -1
+    chromosomes = gen_chromosomes(cases)
+    while fitness3 > fitness1:
+        chromosomes = chromosomes.sort(key=lambda x: fitness(x), reverse=True)
+
+        fitness1 = fitness2
+        fitness2 = fitness3
+        fitness3 = fitness(chromosomes[0])
+
+        chromosomes = selection(chromosomes)
+        while len(chromosomes) < cases:
+            a = random.randint(0, len(chromosomes))
+            b = random.randint(0, len(chromosomes))
+            chromosomes += crossover(chromosomes[a], chromosomes[b])
+
+        a = random.randint(0, len(chromosomes))
+        b = random.randint(0, len(chromosomes))
+        chromosomes[a] = mutation(chromosomes[a])
+        chromosomes[b] = mutation(chromosomes[b])
+    chromosomes = chromosomes.sort(key=lambda x: fitness(x), reverse=True)
+    return fitness(chromosomes[0]), sum(chromosomes[0]), chromosome_to_items(chromosomes[0])
+
+
+results = genetic_algorithm()
+print(f"Benefit: {results[0]}, n_items: {results[1]}, item list: {results[2]}")
+# calculations2 = descent2[2]
+#
+# plt.plot(calculations1)
+# plt.plot(calculations2)
+# plt.show()
