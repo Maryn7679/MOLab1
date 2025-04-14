@@ -21,7 +21,7 @@ def fitness(chromosome):
     fitness_sum = 0
     weight_sum = 0
     for gene, item in zip(chromosome, items):
-        weight_sum += item[0]
+        weight_sum += gene * item[0]
         if weight_sum > size_of_bag:
             return -1
         fitness_sum += gene * item[1]
@@ -34,11 +34,11 @@ def selection(chromosomes):
 
 def crossover(chr1, chr2):
     point = random.randint(1, n_items - 1)
-    return chr1[:point] + chr2[point:], chr2[:point] + chr1[point:]
+    return np.concatenate((chr1[:point], chr2[point:])), np.concatenate((chr2[:point], chr1[point:]))
 
 
 def mutation(chromosome):
-    i = random.randint(0, n_items)
+    i = random.randint(0, n_items - 1)
     chromosome[i] = not chromosome[i]
     return chromosome
 
@@ -57,7 +57,9 @@ def genetic_algorithm():
     fitness3 = -1
     chromosomes = gen_chromosomes(cases)
     while fitness3 > fitness1:
-        chromosomes = chromosomes.sort(key=lambda x: fitness(x), reverse=True)
+        l = list(chromosomes)
+        l.sort(key=lambda x: fitness(x), reverse=True)
+        chromosomes = np.array(l)
 
         fitness1 = fitness2
         fitness2 = fitness3
@@ -65,22 +67,18 @@ def genetic_algorithm():
 
         chromosomes = selection(chromosomes)
         while len(chromosomes) < cases:
-            a = random.randint(0, len(chromosomes))
-            b = random.randint(0, len(chromosomes))
-            chromosomes += crossover(chromosomes[a], chromosomes[b])
+            a = random.randint(0, len(chromosomes) - 1)
+            b = random.randint(0, len(chromosomes) - 1)
+            chromosomes = np.concatenate((chromosomes, crossover(chromosomes[a], chromosomes[b])))
 
-        a = random.randint(0, len(chromosomes))
-        b = random.randint(0, len(chromosomes))
-        chromosomes[a] = mutation(chromosomes[a])
-        chromosomes[b] = mutation(chromosomes[b])
-    chromosomes = chromosomes.sort(key=lambda x: fitness(x), reverse=True)
+        for m in range(5):
+            a = random.randint(0, len(chromosomes) - 1)
+            chromosomes[a] = mutation(chromosomes[a])
+    l = list(chromosomes)
+    l.sort(key=lambda x: fitness(x), reverse=True)
+    chromosomes = np.array(l)
     return fitness(chromosomes[0]), sum(chromosomes[0]), chromosome_to_items(chromosomes[0])
 
 
 results = genetic_algorithm()
 print(f"Benefit: {results[0]}, n_items: {results[1]}, item list: {results[2]}")
-# calculations2 = descent2[2]
-#
-# plt.plot(calculations1)
-# plt.plot(calculations2)
-# plt.show()
