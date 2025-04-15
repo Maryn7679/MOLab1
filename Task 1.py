@@ -4,10 +4,10 @@ import random
 import time
 
 
-cases = 10
-n_items = 5
-size_of_bag = 15
-items = [[12, 4], [1, 2], [1, 1], [2, 2], [4, 10]]
+cases = 20
+size_of_bag = 30
+items = np.array([[12, 4], [1, 2], [1, 1], [2, 2], [4, 10], [1, 8], [15, 3], [7, 0]])
+n_items = items.shape[0]
 
 
 def gen_chromosomes(n):
@@ -47,7 +47,7 @@ def chromosome_to_items(chromosome):
     result = []
     for gene, item in zip(chromosome, items):
         if gene:
-            result.append(item)
+            result.append(item.tolist())
     return result
 
 
